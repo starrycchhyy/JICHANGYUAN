@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>寄畅心镜台</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 主场景：登爽台 -->
+  <div id="main-scene" class="scene">
+    <img src="images/bg.png" alt="登爽台" class="background" />
+
+    <!-- 信物放置区 -->
+    <section class="relic-panel" aria-label="八物归位">
+      <header class="relic-panel__header">
+        <div class="relic-panel__titles">
+          <div class="relic-panel__title">八物归位</div>
+          <div class="relic-panel__subtitle">借景入心，万象澄明</div>
+        </div>
+        <div class="relic-panel__status">
+          <div class="relic-progress" aria-live="polite">
+            <span class="relic-progress__label">进度</span>
+            <span id="relic-progress-text" class="relic-progress__value">0/8</span>
+          </div>
+          <div class="relic-progressbar" role="progressbar" aria-label="信物归位进度" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0">
+            <div class="relic-progressbar__fill"></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="relic-grid" role="list" aria-label="信物槽位">
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="1" type="button"></button>
+          <div class="slot-caption">鹊羽花笺</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="2" type="button"></button>
+          <div class="slot-caption">鱼纹玉佩</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="3" type="button"></button>
+          <div class="slot-caption">鹤喙银哨</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="4" type="button"></button>
+          <div class="slot-caption">石纹诗卷</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="5" type="button"></button>
+          <div class="slot-caption">涧音陶埙</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="6" type="button"></button>
+          <div class="slot-caption">水纹玉磬</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="7" type="button"></button>
+          <div class="slot-caption">飞珠墨锭</div>
+        </div>
+        <div class="slot-item" role="listitem">
+          <button class="slot" data-id="8" type="button"></button>
+          <div class="slot-caption">惠山云纹印</div>
+        </div>
+      </div>
+
+      <div id="main-hint" class="hint">点击槽位将信物归位；再次点击可移除。</div>
+      <div id="main-toast" class="main-toast hidden" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <!-- 光圈特效（纯CSS柔光） -->
+  <div id="light-circle-effect" class="hidden">
+    <div class="circle glow-1"></div>
+    <div class="circle glow-2"></div>
+    <div class="circle glow-3"></div>
+    <div class="ripple"></div>
+  </div>
+
+  <!-- 神秘空间 -->
+  <div id="mystic-realm" class="scene hidden overlay-realm">
+    <canvas id="mirror-canvas"></canvas>
+
+    <!-- 秘境：题签 -->
+    <div class="realm-ui">
+      <div class="realm-actions" aria-label="秘境工具">
+        <button id="journal-toggle" class="realm-btn" type="button" aria-haspopup="dialog">
+          信物志
+        </button>
+      </div>
+
+      <aside id="inscription-panel" class="inscription-panel" aria-label="题签">
+        <div class="inscription-kicker">题签</div>
+        <div id="inscription-title" class="inscription-title">心镜台</div>
+        <div id="inscription-text" class="inscription-text">八物既归位，方入澄明处。</div>
+        <div class="inscription-hint">提示：点击三光柱或印章，可读典故。</div>
+      </aside>
+    </div>
+
+
+    <!-- 轻提示 Toast -->
+    <div id="realm-toast" class="realm-toast hidden" aria-live="polite"></div>
+
+    <!-- 三光柱 -->
+    <div class="light-column left" id="sound-column">
+      <h3>涧响</h3>
+      <p>聆听八音回响</p>
+      <div class="column-quote">清泉石上流</div>
+      <div class="column-quote">声入幽人梦</div>
+    </div>
+    <div class="light-column right" id="poem-column">
+      <h3>漪涟</h3>
+      <p>品读诗文投影</p>
+      <div class="column-quote">文脉如泉</div>
+      <div class="column-quote">流转不息</div>
+    </div>
+    <div class="light-column back" id="view-column">
+      <h3>心鸣</h3>
+      <p>感悟借景之妙</p>
+      <div class="column-quote">巧妙因借</div>
+      <div class="column-quote">匪由人成</div>
+    </div>
+
+    <!-- 水墨装饰元素 -->
+    <div class="ink-decoration ink-decoration-1">墨</div>
+    <div class="ink-decoration ink-decoration-2">韵</div>
+    <div class="ink-decoration ink-decoration-3">境</div>
+    <div class="ink-decoration ink-decoration-4">心</div>
+
+    <!-- 浮动诗句 -->
+    <div class="floating-poem poem-1">山水有清音</div>
+    <div class="floating-poem poem-2">心境自澄明</div>
+    <div class="floating-poem poem-3">借景入禅境</div>
+    <div class="floating-poem poem-4">万象归一镜</div>
+
+    <!-- 墨点装饰 -->
+    <div class="ink-dot dot-1"></div>
+    <div class="ink-dot dot-2"></div>
+    <div class="ink-dot dot-3"></div>
+    <div class="ink-dot dot-4"></div>
+    <div class="ink-dot dot-5"></div>
+    <div class="ink-dot dot-6"></div>
+
+    <!-- 水墨笔触装饰 -->
+    <div class="ink-stroke stroke-1"></div>
+    <div class="ink-stroke stroke-2"></div>
+    <div class="ink-stroke stroke-3"></div>
+
+    <!-- 传统装饰图案 -->
+    <div class="traditional-decoration bamboo-1">竹</div>
+    <div class="traditional-decoration mountain-1">山</div>
+    <div class="traditional-decoration cloud-1">云</div>
+
+    <!-- 背景流动文字 -->
+    <div class="background-text text-1">山水清音</div>
+    <div class="background-text text-2">心镜澄明</div>
+    <div class="background-text text-3">墨韵悠长</div>
+    <div class="background-text text-4">禅境悠然</div>
+    <div class="background-text text-5">借景入画</div>
+    <div class="background-text text-6">万象归一</div>
+    <div class="background-text text-7">泉石清音</div>
+    <div class="background-text text-8">云水禅心</div>
+    <div class="background-text text-9">墨海波澜</div>
+    <div class="background-text text-10">道法自然</div>
+    <div class="background-text text-11">山水画意</div>
+    <div class="background-text text-12">禅心悠远</div>
+    <div class="background-text text-13">烟云缭绕</div>
+    <div class="background-text text-14">清泉石上</div>
+    <div class="background-text text-15">林深鸟鸣</div>
+    <div class="background-text text-16">月下独酌</div>
+    <div class="background-text text-17">松风水月</div>
+    <div class="background-text text-18">云淡风轻</div>
+    <div class="background-text text-19">石泉清韵</div>
+    <div class="background-text text-20">竹影参差</div>
+    <div class="background-text text-21">梅花三弄</div>
+    <div class="background-text text-22">兰亭序韵</div>
+    <div class="background-text text-23">溪山行旅</div>
+    <div class="background-text text-24">桃源胜境</div>
+    <div class="background-text text-25">山水清音</div>
+    <div class="background-text text-26">心境澄明</div>
+    <div class="background-text text-27">墨韵悠扬</div>
+    <div class="background-text text-28">禅意绵长</div>
+
+    <!-- 心镜台 -->
+    <div class="heart-platform">
+      <img src="shiliang/8.svg" alt="惠山云纹印" class="final-relic" id="stamp" />
+      <div class="platform-hint">点云纹印，听乾隆问道</div>
+    </div>
+  </div>
+
+  <!-- 信物志 · 八景册 -->
+  <div id="journal-modal" class="journal-modal hidden" role="dialog" aria-modal="true" aria-label="信物志·八景册">
+    <div class="journal-panel">
+      <div class="journal-header">
+        <div class="journal-title">信物志 · 八景册</div>
+        <div class="journal-subtitle">观物以知景，读景以见心</div>
+        <button id="journal-close" class="journal-close" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="journal-body">
+        <div class="journal-list" role="list" aria-label="八件信物列表">
+          <!-- JS 动态生成 -->
+        </div>
+        <div class="journal-detail" aria-label="信物详情">
+          <div class="journal-detail__media">
+            <img id="journal-img" alt="" />
+          </div>
+          <div class="journal-detail__meta">
+            <div id="journal-name" class="journal-name"></div>
+            <div id="journal-status" class="journal-status"></div>
+            <div id="journal-desc" class="journal-desc"></div>
+            <div class="journal-divider"></div>
+            <div id="journal-story" class="journal-story"></div>
+          </div>
+        </div>
+      </div>
+      <div class="journal-footer">
+        <div id="journal-progress" class="journal-progress">已归位：0 / 8</div>
+        <div class="journal-hint">提示：点击条目切换；按 Esc 关闭</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 典故面板（替代 alert，提升内容承载） -->
+  <div id="lore-modal" class="lore-modal hidden" role="dialog" aria-modal="true" aria-label="寄畅园典故面板">
+    <div class="lore-panel">
+      <div class="lore-header">
+        <div class="lore-title-wrap">
+          <div class="lore-kicker">寄畅园 · 典故</div>
+          <div id="lore-title" class="lore-title">心镜台</div>
+        </div>
+        <div class="lore-actions">
+          <button id="lore-prev" class="lore-btn lore-btn--ghost" type="button">上一则</button>
+          <button id="lore-next" class="lore-btn lore-btn--ghost" type="button">下一则</button>
+          <button id="lore-close" class="lore-close" type="button" aria-label="关闭">×</button>
+        </div>
+      </div>
+      <div class="lore-body">
+        <div id="lore-text" class="lore-text"></div>
+        <div class="lore-divider"></div>
+        <div class="lore-related">
+          <div class="lore-related__title">相关信物</div>
+          <div id="lore-related-list" class="lore-related__list" aria-label="相关信物列表"></div>
+        </div>
+      </div>
+      <div class="lore-footer">
+        <div class="lore-hint">提示：点击秘境水面可生涟漪与题句；按 Esc 关闭</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 乾隆对话面板 -->
+  <div id="dialogue-panel" class="hidden dialogue-panel">
+    <div class="dialogue-character">
+      <img src="images/qianlong.png" alt="乾隆帝" />
+    </div>
+    <div class="dialogue-text-box">
+      <p id="dialogue-text"></p>
+      <div id="dialogue-options" class="options"></div>
+      <button id="dialogue-continue" class="btn-continue">继续</button>
+    </div>
+  </div>
+
+  <!-- 移除确认弹窗 -->
+  <div id="confirm-remove" class="modal hidden">
+    <div class="modal-content">
+      <p id="remove-text">是否要移除这件信物？</p>
+      <div class="modal-buttons">
+        <button id="cancel-remove">取消</button>
+        <button id="confirm-yes">移除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全屏成就弹窗 -->
+  <div id="achievement-fullscreen" class="hidden fullscreen-achievement">
+    <div class="scroll-bg"></div>
+    <div class="content">
+      <h2 id="ach-title" class="title"></h2>
+      <p id="ach-desc" class="desc"></p>
+      <div class="seal">御赐之名</div>
+    </div>
+  </div>
+
+  <!-- 音频资源 -->
+  <audio id="bg-music" src="music/bp music.MP3" loop></audio>
+  <audio id="put-sound" src="music/put.MP3"></audio>
+  <audio id="check-sound" src="music/check.MP3"></audio>
+
+  <!-- 乾隆语音 -->
+  <audio id="voice-1" src="talk/1.MP3"></audio>
+  <audio id="voice-2" src="talk/2.MP3"></audio>
+  <audio id="voice-3" src="talk/3.MP3"></audio>
+  <audio id="voice-4" src="talk/4.MP3"></audio>
+  <audio id="voice-5" src="talk/5.MP3"></audio>
+  <audio id="voice-6" src="talk/6.MP3"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
